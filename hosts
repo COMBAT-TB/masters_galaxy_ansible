@@ -1,12 +1,12 @@
 [galaxyservers]
-galaxy-masters1.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 # 154.114.37.118
-galaxy-masters2.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 # 192.168.10.27
+iridav2005galaxy1.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 # 154.114.37.118
+iridav2005galaxy2.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 # 192.168.10.27
 
 [slurmservers]
-galaxy-masters1.sanbi.ac.za
+iridav2005galaxy1.sanbi.ac.za
 
 [sanbiservers]
-galaxy-masters2.sanbi.ac.za
+iridav2005galaxy2.sanbi.ac.za
 
 [clusterworkers]
 cmc1-05-hpc.sanbi.ac.za
