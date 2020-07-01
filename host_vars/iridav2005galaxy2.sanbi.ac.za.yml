@@ -1,0 +1,69 @@
+# galaxy settings
+galaxy_user: {name: galaxyuser, shell: /bin/bash}
+galaxy_group: galaxyuser
+galaxy_layout: root-dir
+galaxy_root: "/projects/galaxy/irida_2005_galaxy1"
+galaxy_create_user: false
+galaxy_systemd_zergling_env: 'DRMAA_LIBRARY_PATH="/tools/admin/slurm/lib/libdrmaa.so.1" PATH={{ galaxy_venv_dir }}/bin:/tools/admin/slurm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin'
+
+galaxy_config:
+    galaxy:
+      brand: "Masters Galaxy2"
+      admin_users: pvh@sanbi.ac.za
+      database_connection: "postgresql:///galaxyuser?host=/var/run/postgresql"
+      check_migrate_tools: false
+      tool_data_path: "{{ galaxy_mutable_data_dir }}/tool-data"
+      shed_tool_data_dir: "{{ galaxy_mutable_data_dir }}/tool-data"
+      job_config_file: "{{ galaxy_config_dir }}/job_conf.xml"
+      tool_sheds_config_file: "{{ galaxy_config_dir }}/tool_sheds_conf.xml"
+      tool_destinations_config_file: "{{ galaxy_config_dir }}/tool_destinations.yml"
+      cleanup_job: onsuccess
+  
+    uwsgi:
+      # Default values
+      socket: 127.0.0.1:8080
+      buffer-size: 16384
+      processes: 1
+      threads: 4
+      offload-threads: 2
+      static-map:
+        - /static/style={{ galaxy_server_dir }}/static/style/blue
+        - /static={{ galaxy_server_dir }}/static
+        - /favicon.ico={{ galaxy_server_dir }}/static/favicon.ico
+      master: true
+      virtualenv: "{{ galaxy_venv_dir }}"
+      pythonpath: "{{ galaxy_server_dir }}/lib"
+      module: galaxy.webapps.galaxy.buildapp:uwsgi_app()
+      thunder-lock: true
+      die-on-term: true
+      hook-master-start:
+        - unix_signal:2 gracefully_kill_them_all
+        - unix_signal:15 gracefully_kill_them_all
+      py-call-osafterfork: true
+      enable-threads: true
+      # Our additions
+      mule:
+        - lib/galaxy/main.py
+        - lib/galaxy/main.py
+      farm: job-handlers:1,2
+
+galaxy_config_files:
+  # this is duplicated from galaxyservers.yml because we override the setting there
+  - src: "files/tool_sheds_conf.xml"
+    dest: "{{ galaxy_config_dir }}/tool_sheds_conf.xml"
+  - src: "files/tool_destinations.yml"
+    dest: "{{ galaxy_config['galaxy']['tool_destinations_config_file'] }}"
+
+galaxy_config_templates:
+  - src: galaxy/config/job_conf.xml.j2
+    dest: "{{ galaxy_config['galaxy']['job_config_file'] }}"
+  
+# acme
+acme_cloudns_auth_id: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/pvh_masters:auth_id') }}"
+acme_cloudns_password: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/pvh_masters:password') }}"
+
+# nginx specific to using acme
+nginx_ssl_role: sanbi-sa.cloudns-acme
+nginx_conf_ssl_certificate_key: /etc/ssl/private/privkey.pem
+
+nginx_conf_user: "{{ galaxy_user.name }}"
