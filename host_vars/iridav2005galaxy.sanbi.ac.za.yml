@@ -2,14 +2,14 @@
 galaxy_user: {name: galaxyuser, shell: /bin/bash}
 galaxy_group: galaxyuser
 galaxy_layout: root-dir
-galaxy_root: "/projects/galaxy/irida_2005_galaxy1"
+galaxy_root: "/projects/galaxy/irida_v2005_galaxy1"
 galaxy_create_user: false
 galaxy_systemd_zergling_env: 'DRMAA_LIBRARY_PATH="/tools/admin/slurm/lib/libdrmaa.so.1" PATH={{ galaxy_venv_dir }}/bin:/tools/admin/slurm/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin'
 
 galaxy_config:
     galaxy:
-      brand: "Masters Galaxy2"
-      admin_users: pvh@sanbi.ac.za
+      brand: "IRIDA 2005 Galaxy2"
+      admin_users: "zipho@sanbi.ac.za, pvh@sanbi.ac.za"
       database_connection: "postgresql:///galaxyuser?host=/var/run/postgresql"
       check_migrate_tools: false
       tool_data_path: "{{ galaxy_mutable_data_dir }}/tool-data"
@@ -59,8 +59,8 @@ galaxy_config_templates:
     dest: "{{ galaxy_config['galaxy']['job_config_file'] }}"
   
 # acme
-acme_cloudns_auth_id: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/pvh_masters:auth_id') }}"
-acme_cloudns_password: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/pvh_masters:password') }}"
+acme_cloudns_auth_id: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/iridav2005galaxy:auth_id') }}"
+acme_cloudns_password: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/iridav2005galaxy:password') }}"
 
 # nginx specific to using acme
 nginx_ssl_role: sanbi-sa.cloudns-acme

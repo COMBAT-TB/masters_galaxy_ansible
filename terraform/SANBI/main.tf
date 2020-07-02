@@ -1,3 +1,26 @@
+resource "openstack_networking_network_v2" "irida_v2005_galaxy_network" {
+  name = "irida_v2005_galaxy_network"
+}
+
+resource "openstack_networking_subnet_v2" "irida_v2005_galaxy_network_sn_1" {
+  name       = "irida_v2005_galaxy_network_sn_1"
+  network_id = openstack_networking_network_v2.irida_v2005_galaxy_network.id
+  cidr       = "192.168.50.0/24"
+  allocation_pool {
+    start = "192.168.50.50"
+    end = "192.168.50.100"
+  }
+  dns_nameservers = ["192.168.2.75", "192.168.2.8"]
+  ip_version = 4  
+}
+
+resource "openstack_networking_port_v2" "irida_v2005_galaxy_network_i_g_port" {
+  name               = "irida_v2005_galaxy_network_i_g_port"
+  network_id         = openstack_networking_network_v2.irida_v2005_galaxy_network.id
+  security_group_ids = [openstack_compute_secgroup_v2.secgroup_galaxy.id]
+  admin_state_up     = true
+}
+
 resource "openstack_compute_instance_v2" "irida-v20-05-galaxy" {
   name        = "irida-v20-05-galaxy"
   flavor_name = "m1.xlarge"
@@ -5,10 +28,12 @@ resource "openstack_compute_instance_v2" "irida-v20-05-galaxy" {
   image_name  = "ubuntu-18.04-server"
 
   network {
-    port = openstack_networking_port_v2.irida_network_1_i_g_port.id
+    uuid = openstack_networking_network_v2.irida_v2005_galaxy_network.id
+    port = openstack_networking_port_v2.irida_v2005_galaxy_network_i_g_port.id
   }
 
   network {
+    uuid = openstack_networking_network_v2.irida_v2005_galaxy_network.id
     port = openstack_networking_port_v2.c-net_i_g_port.id
   }
  
@@ -20,6 +45,7 @@ output "i_g_floatingip_address" {
 
 resource "openstack_compute_keypair_v2" "iridav2005gxkey" {
   name = "iridav2005gxkey"
+  public_key = file("~/.ssh/id_rsa.pub")
 }
 
 resource "openstack_compute_floatingip_associate_v2" "i_g_floatingip_associate" {
@@ -45,20 +71,6 @@ resource "openstack_compute_secgroup_v2" "secgroup_galaxy" {
   name = "secgroup_galaxy"
   description = "galaxy server security group: SSH and HTTP/S"
 
-  # rule {
-  #   from_port = 0
-  #   to_port   = 0
-  #   ip_protocol = "tcp"
-  #   self      = true
-  # }
-
-  # rule {
-  #   from_port = -1
-  #   to_port = -1
-  #   ip_protocol = "icmp"
-  #   cidr = "0.0.0.0/0"
-  # }
-
   rule {
     from_port   = 22
     to_port     = 22
@@ -81,28 +93,7 @@ resource "openstack_compute_secgroup_v2" "secgroup_galaxy" {
   }
 }
 
-resource "openstack_networking_network_v2" "irida_network_1" {
-  name = "irida_network_1"
-}
 
-resource "openstack_networking_subnet_v2" "irida_network_1_sn_1" {
-  name       = "irida_network_1_sn_1"
-  network_id = openstack_networking_network_v2.irida_network_1.id
-  cidr       = "192.168.50.0/24"
-  allocation_pool {
-    start = "192.168.50.50"
-    end = "192.168.50.100"
-  }
-  dns_nameservers = ["192.168.2.75", "192.168.2.8"]
-  ip_version = 4  
-}
-
-resource "openstack_networking_port_v2" "irida_network_1_i_g_port" {
-  name               = "irida_network_1_i_g_port"
-  network_id         = openstack_networking_network_v2.irida_network_1.id
-  security_group_ids = [openstack_compute_secgroup_v2.secgroup_galaxy.id]
-  admin_state_up     = true
-}
 
 resource "openstack_networking_network_v2" "ceph-net" {
   name = "ceph-net"
