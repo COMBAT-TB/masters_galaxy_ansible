@@ -14,12 +14,12 @@
     - role: sanbi-sa.cephfs-client
       tags: "sanbi-cephfs-client"
 
-# ilifu specific, should run before Galaxy
-- hosts: slurmservers
-  become: true
-  roles:
-    - galaxyproject.repos
-    - galaxyproject.slurm
+# # ilifu specific, should run before Galaxy
+# - hosts: slurmservers
+#   become: true
+#   roles:
+#     - galaxyproject.repos
+#     - galaxyproject.slurm
   
 
 - hosts: galaxyservers

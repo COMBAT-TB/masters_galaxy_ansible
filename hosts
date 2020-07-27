@@ -1,10 +1,10 @@
 [galaxyservers]
-iridav2005galaxy.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 # 192.168.10.27
+iridav2005galaxy.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 #192.168.10.45
 
 [slurmservers]
 
 [sanbiservers]
-iridav2005galaxy.sanbi.ac.za
+iridav2005galaxy.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 #192.168.10.45
 
 [clusterworkers]
-cmc1-05-hpc.sanbi.ac.za
+cmc1-05-hpc.sanbi.ac.za ansible_python_interpreter=/usr/bin/python3 #192.168.10.45

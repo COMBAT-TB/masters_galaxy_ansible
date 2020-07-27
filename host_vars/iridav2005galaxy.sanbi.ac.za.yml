@@ -59,8 +59,8 @@ galaxy_config_templates:
     dest: "{{ galaxy_config['galaxy']['job_config_file'] }}"
   
 # acme
-acme_cloudns_auth_id: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/iridav2005galaxy:auth_id') }}"
-acme_cloudns_password: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/iridav2005galaxy:password') }}"
+acme_cloudns_auth_id: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/irida:auth_id') }}"
+acme_cloudns_password: "{{ lookup('hashi_vault', 'secret=secret/ansible/cloudns/irida:password') }}"
 
 # nginx specific to using acme
 nginx_ssl_role: sanbi-sa.cloudns-acme
